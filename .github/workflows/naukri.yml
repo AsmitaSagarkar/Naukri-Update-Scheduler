@@ -1,9 +1,5 @@
 name: Naukri Auto Update
 
-permissions:
-  contents: read
-  issues: write
-
 on:
   workflow_dispatch:
   schedule:
@@ -31,47 +27,3 @@ jobs:
         env:
           RESUME_DATE_WISE: "true"
         run: python naukri.py
-
-      - name: Post GitHub notification
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const label = 'naukri-auto-update-status';
-            const status = '${{ job.status }}';
-            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
-            const body = [
-              `@${owner}`,
-              '',
-              `Workflow: ${context.workflow}`,
-              `Status: ${status}`,
-              `Branch: ${context.ref.replace('refs/heads/', '')}`,
-              `Run: ${runUrl}`
-            ].join('\n');
-
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner,
-              repo,
-              state: 'open',
-              labels: label,
-              per_page: 1
-            });
-
-            if (issues.length === 0) {
-              await github.rest.issues.create({
-                owner,
-                repo,
-                title: 'Naukri Auto Update Notifications',
-                body: `This issue is used for workflow notifications.\n\n${body}`,
-                labels: [label]
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: issues[0].number,
-                body
-              });
-            }

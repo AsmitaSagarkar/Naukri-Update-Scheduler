@@ -5,7 +5,6 @@
 import io
 import logging
 import os
-import shutil
 import sys
 import time
 from datetime import datetime
@@ -443,8 +442,8 @@ def pick_resume_by_date(default_resume_path):
         source_path = max(pdf_candidates, key=os.path.getmtime)
 
     if source_path and os.path.abspath(source_path) != os.path.abspath(daily_path):
-        shutil.copy2(source_path, daily_path)
-        log_msg("Created daily resume copy: %s" % daily_path)
+        os.replace(source_path, daily_path)
+        log_msg("Renamed resume file to: %s" % daily_path)
         return daily_path
 
     if source_path:
