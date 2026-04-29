@@ -1,8 +1,9 @@
 name: Naukri Auto Update
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: "0 4,16 * * *" # twice daily UTC
+    - cron: "30 3,8 * * *" # 09:00 and 14:00 IST (UTC+5:30)
 
 jobs:
   run-script:
