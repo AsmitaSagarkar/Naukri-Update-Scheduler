@@ -36,9 +36,6 @@ mob = constants.MOBILE
 # False if you dont want to add Random HIDDEN chars to your resume
 updatePDF = False
 
-# If Headless = True, script runs Chrome in headless mode without visible GUI
-headless = False
-
 # ----- No other changes required -----
 
 # Set login URL
@@ -224,18 +221,21 @@ def LoadNaukri(headless):
     """Open Chrome to load Naukri.com"""
 
     options = webdriver.ChromeOptions()
-    options.add_argument("--disable-notifications")
-    options.add_argument("--start-maximized")  # ("--kiosk") for MAC
-    options.add_argument("--disable-popups")
-    options.add_argument("--disable-gpu")
-    if headless:
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("headless")
 
+    options.add_argument("--headless=new")          # IMPORTANT (GitHub Actions)
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-infobars")
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-notifications")
+    options.add_argument("--disable-popup-blocking")
+    
     # updated to use latest selenium Chrome service
     driver = None
     try:
-        driver = webdriver.Chrome(options=options, service=ChromeService())
+        driver = webdriver.Chrome(options=options)
     except Exception as e:
         print(f"Error launching Chrome: {e}")
         driver = webdriver.Chrome(options)
