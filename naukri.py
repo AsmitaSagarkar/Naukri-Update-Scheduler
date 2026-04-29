@@ -5,6 +5,7 @@
 import io
 import logging
 import os
+import shutil
 import sys
 import time
 from datetime import datetime
@@ -27,6 +28,7 @@ import constants
 originalResumePath = constants.ORIGINAL_RESUME_PATH
 # Add Path where modified resume should be saved
 modifiedResumePath = constants.MODIFIED_RESUME_PATH
+resumeDateWise = constants.RESUME_DATE_WISE
 
 # Update your naukri username and password here before running
 username = constants.USERNAME
@@ -373,7 +375,7 @@ def UpdateProfile(driver):
 
 
 
-def UpdateResume():
+def UpdateResume(source_resume_path):
     try:
         # Random text with random location and size
         txt = randomText()
@@ -388,7 +390,7 @@ def UpdateResume():
 
         packet.seek(0)
         new_pdf = PdfReader(packet)
-        with open(originalResumePath, "rb") as f:
+        with open(source_resume_path, "rb") as f:
             existing_pdf = PdfReader(f)
             pagecount = len(existing_pdf.pages)
             print("Found %s pages in PDF" % pagecount)
@@ -408,7 +410,47 @@ def UpdateResume():
             return os.path.abspath(modifiedResumePath)
     except Exception as e:
         catch(e)
-    return os.path.abspath(originalResumePath)
+    return os.path.abspath(source_resume_path)
+
+
+def pick_resume_by_date(default_resume_path):
+    """Ensure a daily resume file exists as Sahil_Gupta_Resume_dd_mm_yy.pdf and use it."""
+    if not resumeDateWise:
+        return default_resume_path
+
+    default_abs = os.path.abspath(default_resume_path)
+    resume_dir = os.path.dirname(default_abs) or os.getcwd()
+    if not os.path.isdir(resume_dir):
+        return default_resume_path
+
+    daily_name = f"Sahil_Gupta_Resume_{datetime.today().strftime('%d_%m_%y')}.pdf"
+    daily_path = os.path.join(resume_dir, daily_name)
+
+    if os.path.exists(daily_path):
+        log_msg("Date-wise resume selected: %s" % daily_path)
+        return daily_path
+
+    pdf_candidates = [
+        os.path.join(resume_dir, name)
+        for name in os.listdir(resume_dir)
+        if name.lower().endswith(".pdf")
+    ]
+
+    source_path = None
+    if os.path.exists(default_abs):
+        source_path = default_abs
+    elif pdf_candidates:
+        source_path = max(pdf_candidates, key=os.path.getmtime)
+
+    if source_path and os.path.abspath(source_path) != os.path.abspath(daily_path):
+        shutil.copy2(source_path, daily_path)
+        log_msg("Created daily resume copy: %s" % daily_path)
+        return daily_path
+
+    if source_path:
+        return source_path
+
+    return default_resume_path
 
 
 
@@ -468,17 +510,18 @@ def main():
     log_msg("-----Naukri.py Script Run Begin-----")
     driver = None
     try:
-        status, driver = naukriLogin(headless)
+        status, driver = naukriLogin(headless=False)
         if status:
             UpdateProfile(driver)
-            if os.path.exists(originalResumePath):
+            resume_source_path = pick_resume_by_date(originalResumePath)
+            if os.path.exists(resume_source_path):
                 if updatePDF:
-                    resumePath = UpdateResume()
+                    resumePath = UpdateResume(resume_source_path)
                     UploadResume(driver, resumePath)
                 else:
-                    UploadResume(driver, originalResumePath)
+                    UploadResume(driver, resume_source_path)
             else:
-                log_msg("Resume not found at %s " % originalResumePath)
+                log_msg("Resume not found at %s " % resume_source_path)
 
     except Exception as e:
         catch(e)
