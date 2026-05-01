@@ -4,8 +4,8 @@ USERNAME = os.getenv("NAUKRI_USERNAME")
 PASSWORD = os.getenv("NAUKRI_PASSWORD")
 MOBILE = os.getenv("MOBILE")
 
-ORIGINAL_RESUME_PATH = "resume/your_resume.pdf"
-MODIFIED_RESUME_PATH = "resume/modified_resume.pdf"
+ORIGINAL_RESUME_PATH = "resume/Asmita_Sagarkar.pdf"
+MODIFIED_RESUME_PATH = "resume/Asmita_Sagarkar.pdf"
 RESUME_DATE_WISE = os.getenv("RESUME_DATE_WISE", "true").lower() == "true"
 
 NAUKRI_LOGIN_URL = "https://www.naukri.com/nlogin/login"

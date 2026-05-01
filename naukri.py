@@ -223,7 +223,9 @@ def LoadNaukri(headless):
 
     options = webdriver.ChromeOptions()
 
-    options.add_argument("--headless=new")          # IMPORTANT (GitHub Actions)
+    # 1. COMMENT OUT HEADLESS FOR LOCAL TESTING!
+     options.add_argument("--headless=new")          
+    
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
@@ -233,6 +235,12 @@ def LoadNaukri(headless):
     options.add_argument("--disable-notifications")
     options.add_argument("--disable-popup-blocking")
     
+    # 2. ADD THESE ANTI-BOT FLAGS
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+
     # updated to use latest selenium Chrome service
     driver = None
     try:
@@ -241,6 +249,9 @@ def LoadNaukri(headless):
         print(f"Error launching Chrome: {e}")
         driver = webdriver.Chrome(options)
     log_msg("Google Chrome Launched!")
+
+    # Erase webdriver variables using JavaScript
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
     driver.implicitly_wait(5)
     driver.get(NaukriURL)
@@ -413,7 +424,7 @@ def UpdateResume(source_resume_path):
 
 
 def pick_resume_by_date(default_resume_path):
-    """Ensure a daily resume file exists as Sahil_Gupta_Resume_dd_mm_yy.pdf and use it."""
+    """Ensure a daily resume file exists as Asmita_Sagarkar_Resume_dd_mm_yy.pdf and use it."""
     if not resumeDateWise:
         return default_resume_path
 
@@ -422,7 +433,7 @@ def pick_resume_by_date(default_resume_path):
     if not os.path.isdir(resume_dir):
         return default_resume_path
 
-    daily_name = f"Sahil_Gupta_Resume_{datetime.today().strftime('%d_%m_%y')}.pdf"
+    daily_name = f"Asmita_Sagarkar_Resume_{datetime.today().strftime('%d_%m_%y')}.pdf"
     daily_path = os.path.join(resume_dir, daily_name)
 
     if os.path.exists(daily_path):

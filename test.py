@@ -28,7 +28,7 @@ class Test(unittest.TestCase):
         with open(originalResumePath, "wb") as f:
             writer.write(f)
 
-        result_path = naukri.UpdateResume()
+        result_path = naukri.UpdateResume(naukri.originalResumePath)
         # Check if the modified PDF file is created
         self.assertTrue(os.path.exists(result_path))
         self.assertIn(modifiedResumePath, result_path)
