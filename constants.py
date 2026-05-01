@@ -1,5 +1,6 @@
 import os
 # Configuration and constants used in the script. Update values as needed.
+
 USERNAME = os.getenv("NAUKRI_USERNAME")
 PASSWORD = os.getenv("NAUKRI_PASSWORD")
 MOBILE = os.getenv("MOBILE")
