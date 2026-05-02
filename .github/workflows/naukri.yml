@@ -24,7 +24,7 @@ jobs:
 
       - name: Run python naukri.py
         env:
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          USERNAME: ${{ secrets.NAUKRI_USERNAME }}
+          PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
           MOBILE: ${{ secrets.MOBILE }}
         run: python naukri.py
