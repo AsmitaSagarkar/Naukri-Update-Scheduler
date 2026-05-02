@@ -35,7 +35,7 @@ password = constants.PASSWORD
 mob = constants.MOBILE
 
 # False if you dont want to add Random HIDDEN chars to your resume
-updatePDF = False
+updatePDF = true
 
 # ----- No other changes required -----
 
