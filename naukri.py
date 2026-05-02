@@ -224,7 +224,7 @@ def LoadNaukri(headless):
     options = webdriver.ChromeOptions()
 
     # 1. COMMENT OUT HEADLESS FOR LOCAL TESTING!
-     options.add_argument("--headless=new")          
+    options.add_argument("--headless=new")          
     
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
