@@ -1,26 +1,21 @@
-name: Python package
+name: Update Naukri Profile
 
 on:
   schedule:
     - cron: '0 4 * * *'
+  workflow_dispatch: # This allows you to click the "Run workflow" button manually!
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
+          python-version: "3.10"
 
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@v1.2.0
@@ -30,6 +25,9 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Test
-        run: |
-          python -m unittest test || python3 -m unittest test.py
+      - name: Run python naukri.py
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          MOBILE: ${{ secrets.MOBILE }}
+        run: python naukri.py
