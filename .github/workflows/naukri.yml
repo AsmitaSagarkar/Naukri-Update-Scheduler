@@ -1,29 +1,30 @@
-name: Naukri Auto Update
+name: Update Naukri Profile
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "30 3,8 * * *" # 09:00 and 14:00 IST (UTC+5:30)
+    - cron: '0 4 * * *'
+  workflow_dispatch: # This allows you to click the "Run workflow" button manually!
 
 jobs:
-  run-script:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      - run: pip install -r requirements.txt
-
-      - name: Install Chrome
+      - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y chromium-browser
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Script
+      - name: Run python naukri.py
         env:
-          RESUME_DATE_WISE: "true"
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          MOBILE: ${{ secrets.MOBILE }}
         run: python naukri.py
